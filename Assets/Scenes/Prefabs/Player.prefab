@@ -588,6 +588,8 @@ MonoBehaviour:
   bulletPrefab: {fileID: 1347353089808952, guid: f5f2511863c0a4969b8598afebbee5bc,
     type: 2}
   bulletSpawn: {fileID: 4998438747455994}
+  cam: {fileID: 20779627813773924}
+  healthBar: {fileID: 223162157238817034}
 --- !u!124 &124298361854003874
 Behaviour:
   m_ObjectHideFlags: 1
@@ -641,7 +643,7 @@ Canvas:
   m_GameObject: {fileID: 1184622920428746}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 2
+  m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0

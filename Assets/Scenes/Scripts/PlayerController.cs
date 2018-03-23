@@ -6,6 +6,18 @@ public class PlayerController : NetworkBehaviour {
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
 
+	public Camera cam;
+	public Canvas healthBar;
+
+	void Start()
+	{
+		if (isLocalPlayer)
+			return;
+
+		cam.enabled = false;
+		healthBar.enabled = false;
+	}
+
 	// Use this for initialization
 	public override void OnStartLocalPlayer()
 	{
