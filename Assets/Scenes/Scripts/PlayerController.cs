@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class PlayerController : NetworkBehaviour {
 
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
-
 	public Camera cam;
 	public Canvas healthBar;
+	public Text scoreText;
+
+	private int score;
 
 	void Start()
 	{
+		score = 0;
+
 		if (isLocalPlayer)
 			return;
 
 		cam.enabled = false;
 		healthBar.enabled = false;
+		scoreText.enabled = false;
 	}
 
 	// Use this for initialization
@@ -51,7 +57,8 @@ public class PlayerController : NetworkBehaviour {
 		var bullet = (GameObject)Instantiate (
 			             bulletPrefab,
 			             bulletSpawn.position,
-			             bulletSpawn.rotation);
+			             bulletSpawn.rotation,
+						 transform.parent);
 
 		// Add velocity to the bullet
 		bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6;
@@ -61,5 +68,11 @@ public class PlayerController : NetworkBehaviour {
 
 		// Destroy the bullet after 2 seconds
 		Destroy(bullet, 2.0f);
+	}
+
+	public void IncrementScore()
+	{
+		score++;
+		scoreText.text = "Score: " + score.ToString ();
 	}
 }

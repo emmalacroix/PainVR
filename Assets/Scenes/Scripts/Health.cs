@@ -20,7 +20,7 @@ public class Health : NetworkBehaviour {
 		}
 	}
 
-	public void TakeDamage(int amount)
+	public void TakeDamage(int amount)//, PlayerController player)
 	{
 		if (!isServer)
 		{
@@ -28,9 +28,12 @@ public class Health : NetworkBehaviour {
 		}
 
 		currentHealth -= amount;
+
 		if (currentHealth <= 0)
 		{
-			if (destroyOnDeath) {
+			if (destroyOnDeath)
+			{
+				//player.IncrementScore ();
 				Destroy (gameObject);
 			}
 			else
