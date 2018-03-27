@@ -9,12 +9,17 @@ public class PlayerController : NetworkBehaviour {
 	public Camera cam;
 	public Canvas healthBar;
 	public Text scoreText;
+	public bool competing;
 
 	private int score;
+	private float speed;
+	private int damage;
 
 	void Start()
 	{
 		score = 0;
+		speed = 1.0f;
+		damage = 10;
 
 		if (isLocalPlayer)
 			return;
@@ -39,7 +44,7 @@ public class PlayerController : NetworkBehaviour {
 		}
 
 		var x = Input.GetAxis ("Horizontal") * Time.deltaTime * 150.0f;
-		var z = Input.GetAxis ("Vertical") * Time.deltaTime * 3.0f;
+		var z = Input.GetAxis ("Vertical") * Time.deltaTime * 3.0f * speed;
 
 		transform.Rotate (0, x, 0);
 		transform.Translate (0, 0, z);
@@ -63,11 +68,8 @@ public class PlayerController : NetworkBehaviour {
 		// Add velocity to the bullet
 		bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6;
 
-//		if (isServer)
-//		{
-			//Spawn the bullet on the clients
-			NetworkServer.Spawn (bullet);
-//		}
+		//Spawn the bullet on the clients
+		NetworkServer.Spawn (bullet);
 
 		// Destroy the bullet after 2 seconds
 		Destroy(bullet, 2.0f);
@@ -77,5 +79,34 @@ public class PlayerController : NetworkBehaviour {
 	{
 		score++;
 		scoreText.text = "Score: " + score.ToString ();
+	}
+
+	public bool IsCompeting()
+	{
+		return competing;
+	}
+
+	public int GetDamage()
+	{
+		return damage;
+	}
+
+	public void AddBoost()
+	{
+		speed = 3.0f;
+		damage = 20;
+		Invoke ("RemoveBoost", 5.0f);
+	}
+
+	public void Stun()
+	{
+		speed = 0.0f;
+		Invoke ("RemoveBoost", 5.0f);
+	}
+
+	public void RemoveBoost()
+	{
+		speed = 1.0f;
+		damage = 10;
 	}
 }

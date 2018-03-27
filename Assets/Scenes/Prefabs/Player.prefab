@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 114217664813050108}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -502,7 +502,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 100
   healthBar: {fileID: 224536871599175872}
-  destroyOnDeath: 0
 --- !u!114 &114240582505049034
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -697,6 +696,7 @@ MonoBehaviour:
   cam: {fileID: 20779627813773924}
   healthBar: {fileID: 223162157238817034}
   scoreText: {fileID: 114240582505049034}
+  competing: 1
 --- !u!124 &124298361854003874
 Behaviour:
   m_ObjectHideFlags: 1

@@ -9,7 +9,6 @@ public class Health : NetworkBehaviour {
 	[SyncVar(hook = "OnChangeHealth")]
 	public int currentHealth = maxHealth;
 	public RectTransform healthBar;
-	public bool destroyOnDeath;
 	private NetworkStartPosition[] spawnPoints;
 
 	void Start ()
@@ -20,37 +19,37 @@ public class Health : NetworkBehaviour {
 		}
 	}
 
-	public void TakeDamage(int amount, PlayerController shooter)
+	public void TakeDamage(PlayerController shooter)
 	{
-//		if (isClient)
-//		{
-//			var tempHealth = currentHealth - amount;
-//			if (tempHealth <= 0) 
-//			{
-//				shooter.IncrementScore ();
-//			}
-//		}
-
 		if (!isServer)
 		{
 			return;
 		}
 
-		currentHealth -= amount;
-
-		if (currentHealth <= 0)
+		if (gameObject.tag == "Enemy")
 		{
-			if (destroyOnDeath)
+			currentHealth -= shooter.GetDamage();
+			if (currentHealth <= 0)
 			{
 				shooter.IncrementScore ();
 				Destroy (gameObject);
 			}
+		} else if (gameObject.tag == "Player")
+		{
+			PlayerController player = gameObject.GetComponent<PlayerController> ();
+			if (shooter.IsCompeting ())
+			{
+				currentHealth -= shooter.GetDamage();
+				player.Stun ();
+				if (currentHealth <= 0)
+				{
+					currentHealth = maxHealth;
+					RpcRespawn ();
+				}
+			}
 			else
 			{
-				currentHealth = maxHealth;
-
-				//called on the server but invoked on the clients
-				RpcRespawn ();
+				player.AddBoost ();
 			}
 		}
 	}
