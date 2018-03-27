@@ -58,13 +58,16 @@ public class PlayerController : NetworkBehaviour {
 			             bulletPrefab,
 			             bulletSpawn.position,
 			             bulletSpawn.rotation,
-						 transform.parent);
+						 gameObject.transform);
 
 		// Add velocity to the bullet
 		bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6;
 
-		//Spawn the bullet on the clients
-		NetworkServer.Spawn(bullet);
+//		if (isServer)
+//		{
+			//Spawn the bullet on the clients
+			NetworkServer.Spawn (bullet);
+//		}
 
 		// Destroy the bullet after 2 seconds
 		Destroy(bullet, 2.0f);

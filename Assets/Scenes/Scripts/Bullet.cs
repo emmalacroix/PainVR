@@ -4,20 +4,24 @@ using UnityEngine.UI;
 
 public class Bullet : MonoBehaviour {
 
+	public PlayerController shooter;
+
+	void Start()
+	{
+		shooter = gameObject.transform.parent.gameObject.GetComponent<PlayerController>();
+		gameObject.transform.parent = null;
+	}
+
 	void OnCollisionEnter(Collision collision)
 	{
-		//var parent = gameObject.transform.parent.gameObject;
-		//var player = parent.GetComponent<PlayerController>();
-
-		//Destroy (parent);
-		Destroy (gameObject);
-
 		var hit = collision.gameObject;
 		var health = hit.GetComponent<Health> ();
 
 		if (health != null)
 		{
-			health.TakeDamage (10);//, player);
+			health.TakeDamage (10, shooter);
 		}
+
+		Destroy (gameObject);
 	}
 }

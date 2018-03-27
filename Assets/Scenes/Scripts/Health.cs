@@ -20,8 +20,17 @@ public class Health : NetworkBehaviour {
 		}
 	}
 
-	public void TakeDamage(int amount)//, PlayerController player)
+	public void TakeDamage(int amount, PlayerController shooter)
 	{
+//		if (isClient)
+//		{
+//			var tempHealth = currentHealth - amount;
+//			if (tempHealth <= 0) 
+//			{
+//				shooter.IncrementScore ();
+//			}
+//		}
+
 		if (!isServer)
 		{
 			return;
@@ -33,7 +42,7 @@ public class Health : NetworkBehaviour {
 		{
 			if (destroyOnDeath)
 			{
-				//player.IncrementScore ();
+				shooter.IncrementScore ();
 				Destroy (gameObject);
 			}
 			else
