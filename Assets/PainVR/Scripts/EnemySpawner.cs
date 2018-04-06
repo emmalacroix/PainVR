@@ -21,6 +21,7 @@ public class EnemySpawner : NetworkBehaviour {
 				0.0f);
 
 			var enemy = (GameObject)Instantiate(enemyPrefab, spawnPosition, spawnRotation);
+			enemy.tag = "Enemy";
 			NetworkServer.Spawn(enemy);
 		}
 	}
