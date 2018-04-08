@@ -11,8 +11,12 @@ public class PlayerController : NetworkBehaviour {
 	public Text scoreText;
 	public bool competing;
 
+	[SyncVar(hook = "OnChangeScore")]
 	private int score;
+
+	[SyncVar(hook = "OnChangeSpeed")]
 	private float speed;
+	[SyncVar(hook = "OnChangeDamage")]
 	private int damage;
 
 	void Start()
@@ -79,6 +83,11 @@ public class PlayerController : NetworkBehaviour {
 	public void IncrementScore()
 	{
 		score++;
+	}
+
+	void OnChangeScore(int new_score)
+	{
+		score = new_score;
 		if (isLocalPlayer)
 			scoreText.text = "My Score: " + score.ToString ();
 		else
@@ -108,8 +117,19 @@ public class PlayerController : NetworkBehaviour {
 		Invoke ("RemoveBoost", 5.0f);
 	}
 
+	void OnChangeSpeed(float new_speed)
+	{
+		speed = new_speed;
+	}
+
+	void OnChangeDamage(int new_damage)
+	{
+		damage = new_damage;
+	}
+
 	public void RemoveBoost()
 	{
+		//return to default speed and damage settings
 		speed = 1.0f;
 		damage = 10;
 	}
