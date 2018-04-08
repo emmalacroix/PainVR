@@ -5,7 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - TeamScore
+  - MaxBoundary
+  - MinBoundary
   layers:
   - Default
   - TransparentFX

@@ -15,14 +15,15 @@ public class EnemyController : NetworkBehaviour {
 	void Start () {
 		speed = 3.0f;
 		damage = 10;
-		maxPosition = new Vector3(11.9f,0.0f,19.9f);
-		minPosition = new Vector3(-19.6f,0.0f,-11.4f);
+		var minObj = GameObject.FindGameObjectWithTag ("MinBoundary");
+		var maxObj = GameObject.FindGameObjectWithTag ("MaxBoundary");
+		minPosition = minObj.transform.position;
+		maxPosition = maxObj.transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//Use this for enemy AI
-		//var x = transform.forward.x * Time.deltaTime * speed;
+		//Enemy AI movement goes here
 		var dir = transform.forward;
 		dir.Normalize ();
 		var z = Mathf.Pow(Mathf.Pow(dir.z, 2)+Mathf.Pow(dir.x, 2), 0.5f);
@@ -31,12 +32,20 @@ public class EnemyController : NetworkBehaviour {
 		z = z * Time.deltaTime * speed;
 
 		transform.Translate (0, 0, z);
-		if (transform.position.x > maxPosition.x || transform.position.z > maxPosition.z
-		    || transform.position.x < minPosition.x || transform.position.z < minPosition.z)
+		if (OutOfBounds())
 		{
 			transform.Translate (0, 0, -z);
 			transform.Rotate (0, 60, 0);
 		}
+	}
+
+	bool OutOfBounds()
+	{
+		if (transform.position.x > maxPosition.x || transform.position.z > maxPosition.z
+		    || transform.position.x < minPosition.x || transform.position.z < minPosition.z)
+			return true;
+		else
+			return false;
 	}
 
 	[Command] //this code is called on the client but runs on the server!
@@ -58,4 +67,11 @@ public class EnemyController : NetworkBehaviour {
 		// Destroy the bullet after 2 seconds
 		Destroy(bullet, 2.0f);
 	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		//Debug.Log ("Trigger entered");
+		transform.Rotate (0, 60, 0);
+	}
+
 }

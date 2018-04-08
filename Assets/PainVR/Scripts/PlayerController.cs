@@ -10,15 +10,12 @@ public class PlayerController : NetworkBehaviour {
 	public Canvas healthBar;
 	public Text scoreText;
 	public bool competing;
-
 	[SyncVar(hook = "OnChangeScore")]
 	private int score;
-
 	[SyncVar(hook = "OnChangeSpeed")]
 	private float speed;
 	[SyncVar(hook = "OnChangeDamage")]
 	private int damage;
-
 	[SyncVar(hook = "OnStun")]
 	private bool stunned;
 
