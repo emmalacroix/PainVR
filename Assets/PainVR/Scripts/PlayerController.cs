@@ -19,19 +19,35 @@ public class PlayerController : NetworkBehaviour {
 	[SyncVar(hook = "OnChangeDamage")]
 	private int damage;
 
+	[SyncVar(hook = "OnStun")]
+	private bool stunned;
+
 	void Start()
 	{
 		score = 0;
 		speed = 1.0f;
+		stunned = false;
 		damage = 10;
 
 		if (isLocalPlayer)
+		{
+			if (competing)
+				scoreText.text = "My Score: " + score.ToString ();
+			else
+				scoreText.text = "Team Score: " + score.ToString ();
 			return;
+		}
 
 		cam.enabled = false;
 		healthBar.enabled = false;
-		scoreText.text = "Opponent's Score: 0";
-		scoreText.transform.position = scoreText.transform.position + new Vector3(150,0,0);
+
+		if (competing)
+		{
+			scoreText.transform.position = scoreText.transform.position + new Vector3 (150, 0, 0);
+			scoreText.text = "Opponent's Score: " + score.ToString ();
+		}
+		else
+			scoreText.enabled = false;
 	}
 
 	// Use this for initialization
@@ -48,15 +64,16 @@ public class PlayerController : NetworkBehaviour {
 			return;
 		}
 
-		var x = Input.GetAxis ("Horizontal") * Time.deltaTime * 150.0f;
-		var z = Input.GetAxis ("Vertical") * Time.deltaTime * 3.0f * speed;
-
-		transform.Rotate (0, x, 0);
-		transform.Translate (0, 0, z);
-
-		if (Input.GetKeyDown (KeyCode.Space))
+		if (!stunned)
 		{
-			CmdFire ();
+			var x = Input.GetAxis ("Horizontal") * Time.deltaTime * 150.0f;
+			var z = Input.GetAxis ("Vertical") * Time.deltaTime * 3.0f * speed;
+
+			transform.Rotate (0, x, 0);
+			transform.Translate (0, 0, z);
+
+			if (Input.GetKeyDown (KeyCode.Space))
+				CmdFire ();
 		}
 	}
 
@@ -85,18 +102,38 @@ public class PlayerController : NetworkBehaviour {
 		score++;
 	}
 
+	public void IncrementTeamScore()
+	{
+		PlayerController[] players = FindObjectsOfType<PlayerController> ();
+		foreach (PlayerController player in players)
+		{
+			player.IncrementScore ();
+		}
+	}
+
 	void OnChangeScore(int new_score)
 	{
-		score = new_score;
-		if (isLocalPlayer)
-			scoreText.text = "My Score: " + score.ToString ();
+		if (competing)
+		{
+			if (isLocalPlayer)
+				scoreText.text = "My Score: " + new_score.ToString ();
+			else
+				scoreText.text = "Opponent's Score: " + new_score.ToString ();
+		}
 		else
-			scoreText.text = "Opponent's Score: " + score.ToString ();
+		{
+			scoreText.text = "Team Score: " + new_score.ToString ();
+		}
 	}
 
 	public bool IsCompeting()
 	{
 		return competing;
+	}
+
+	public bool Stunned()
+	{
+		return stunned;
 	}
 
 	public int GetDamage()
@@ -113,13 +150,18 @@ public class PlayerController : NetworkBehaviour {
 
 	public void Stun()
 	{
-		speed = 0.0f;
+		stunned = true;
 		Invoke ("RemoveBoost", 5.0f);
 	}
 
 	void OnChangeSpeed(float new_speed)
 	{
 		speed = new_speed;
+	}
+
+	void OnStun(bool s)
+	{
+		stunned = s;
 	}
 
 	void OnChangeDamage(int new_damage)
@@ -131,6 +173,8 @@ public class PlayerController : NetworkBehaviour {
 	{
 		//return to default speed and damage settings
 		speed = 1.0f;
+		stunned = false;
 		damage = 10;
 	}
+		
 }

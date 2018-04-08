@@ -31,7 +31,14 @@ public class Health : NetworkBehaviour {
 			currentHealth -= shooter.GetDamage();
 			if (currentHealth <= 0)
 			{
-				shooter.IncrementScore ();
+				if (shooter.IsCompeting ())
+				{
+					shooter.IncrementScore ();
+				}
+				else
+				{
+					shooter.IncrementTeamScore ();
+				}
 				Destroy (gameObject);
 			}
 		} else if (gameObject.tag == "Player")
