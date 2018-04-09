@@ -18,6 +18,8 @@ public class PlayerController : NetworkBehaviour {
 	private int damage;
 	[SyncVar(hook = "OnStun")]
 	private bool stunned;
+	private Vector3 maxPosition;
+	private Vector3 minPosition;
 
 	void Start()
 	{
@@ -25,6 +27,10 @@ public class PlayerController : NetworkBehaviour {
 		speed = 1.0f;
 		stunned = false;
 		damage = 10;
+		var minObj = GameObject.FindGameObjectWithTag ("MinBoundary");
+		var maxObj = GameObject.FindGameObjectWithTag ("MaxBoundary");
+		minPosition = minObj.transform.position;
+		maxPosition = maxObj.transform.position;
 
 		if (isLocalPlayer)
 		{
@@ -68,6 +74,8 @@ public class PlayerController : NetworkBehaviour {
 
 			transform.Rotate (0, x, 0);
 			transform.Translate (0, 0, z);
+			if (OutOfBounds())
+				transform.Translate (0, 0, -z);
 
 			if (Input.GetKeyDown (KeyCode.Space))
 				CmdFire ();
@@ -173,5 +181,28 @@ public class PlayerController : NetworkBehaviour {
 		stunned = false;
 		damage = 10;
 	}
-		
+
+	void OnTriggerEnter(Collider other)
+	{
+		//Debug.Log ("Player entered trigger");
+		//first find normal of point where player entered
+		var collisionPoint = other.ClosestPointOnBounds (transform.position);
+		Ray ray = new Ray (transform.position, collisionPoint - transform.position);
+		RaycastHit hit;
+		other.Raycast (ray, out hit, 10.0f);
+		var normal = hit.normal;
+		normal = Vector3.ProjectOnPlane (normal, new Vector3 (0, 1, 0));
+		normal.Normalize ();
+		//move player away from collision point along normal
+		transform.position = collisionPoint + 1.2f*GetComponent<CapsuleCollider>().radius*normal;
+	}
+
+	bool OutOfBounds()
+	{
+		if (transform.position.x > maxPosition.x || transform.position.z > maxPosition.z
+			|| transform.position.x < minPosition.x || transform.position.z < minPosition.z)
+			return true;
+		else
+			return false;
+	}
 }
