@@ -6,7 +6,8 @@ public class EnemyController : NetworkBehaviour {
 
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
-	private float speed;
+	private float forwardSpeed;
+	private float rotationSpeed;
 	private int damage;
 	private Vector3 maxPosition;
 	private Vector3 minPosition;
@@ -14,7 +15,8 @@ public class EnemyController : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		speed = 3.0f;
+		forwardSpeed = 2.0f;
+		rotationSpeed = 2.0f;
 		damage = 10;
 		var minObj = GameObject.FindGameObjectWithTag ("MinBoundary");
 		var maxObj = GameObject.FindGameObjectWithTag ("MaxBoundary");
@@ -27,7 +29,7 @@ public class EnemyController : NetworkBehaviour {
 	void Update () {
 		
 		//Enemy AI shooting goes here
-		Transform target = null;
+		Vector3 targetDir = new Vector3 (0, 0, 0);
 		float dist = Mathf.Infinity;
 		PlayerController[] players = FindObjectsOfType<PlayerController> ();
 		foreach (PlayerController player in players)
@@ -36,17 +38,23 @@ public class EnemyController : NetworkBehaviour {
 			if (distToPlayer < 5.0f && distToPlayer < dist)
 			{
 				dist = distToPlayer;
-				target = player.transform;
+				targetDir = player.transform.position - transform.position;
 			}
 		}
-		if (target != null)
+		if (targetDir != new Vector3 (0, 0, 0))
 		{
 			if (!waiting)
 			{
-				transform.LookAt (target);
-				CmdFire ();
-				waiting = true;
-				Invoke ("StopWaiting", 1.0f);
+				//transform.LookAt (target);
+				float step = rotationSpeed * Time.deltaTime;
+				Vector3 newDir = Vector3.RotateTowards (transform.forward, targetDir, step, 0.0f);
+				transform.rotation = Quaternion.LookRotation (newDir);
+				if (Vector3.Magnitude(Vector3.Cross(transform.forward, targetDir)) < 0.5f && Vector3.Dot(transform.forward, targetDir) >= 0)
+				{
+					CmdFire ();
+					waiting = true;
+					Invoke ("StopWaiting", 1.0f);
+				}
 			}
 		}
 		else
@@ -57,7 +65,7 @@ public class EnemyController : NetworkBehaviour {
 			var z = Mathf.Pow(Mathf.Pow(dir.z, 2)+Mathf.Pow(dir.x, 2), 0.5f);
 			if (z < 0)
 				z = -z;
-			z = z * Time.deltaTime * speed;
+			z = z * Time.deltaTime * forwardSpeed;
 
 			transform.Translate (0, 0, z);
 			if (OutOfBounds())
