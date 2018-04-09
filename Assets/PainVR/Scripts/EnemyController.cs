@@ -116,4 +116,9 @@ public class EnemyController : NetworkBehaviour {
 		transform.Rotate (0, 60, 0);
 	}
 
+	public int GetDamage()
+	{
+		return damage;
+	}
+
 }

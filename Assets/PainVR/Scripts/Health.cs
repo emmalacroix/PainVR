@@ -19,7 +19,7 @@ public class Health : NetworkBehaviour {
 		}
 	}
 
-	public void TakeDamage(PlayerController shooter)
+	public void TakeDamage(GameObject shooter)
 	{
 		if (!isServer)
 		{
@@ -28,35 +28,57 @@ public class Health : NetworkBehaviour {
 
 		if (gameObject.tag == "Enemy")
 		{
-			currentHealth -= shooter.GetDamage();
-			if (currentHealth <= 0)
+			if (shooter.tag == "Player") //a player is shooting an enemy
 			{
-				if (shooter.IsCompeting ())
+				PlayerController player = shooter.GetComponent<PlayerController> ();
+				currentHealth -= player.GetDamage ();
+				if (currentHealth <= 0)
 				{
-					shooter.IncrementScore ();
+					if (player.IsCompeting ())
+					{
+						player.IncrementScore ();
+					}
+					else
+					{
+						player.IncrementTeamScore ();
+					}
+					Destroy (gameObject);
 				}
-				else
-				{
-					shooter.IncrementTeamScore ();
-				}
-				Destroy (gameObject);
+			}
+			else //an enemy is shooting another enemy
+			{
+				//do nothing
 			}
 		} else if (gameObject.tag == "Player")
 		{
-			PlayerController player = gameObject.GetComponent<PlayerController> ();
-			if (shooter.IsCompeting ())
+			if (shooter.tag == "Player") //a player is shooting another player
 			{
-				currentHealth -= shooter.GetDamage();
-				player.Stun ();
+				PlayerController playerShooting = shooter.GetComponent<PlayerController> ();
+				PlayerController playerBeingShot = gameObject.GetComponent<PlayerController> ();
+				if (playerShooting.IsCompeting ())
+				{
+					currentHealth -= playerShooting.GetDamage ();
+					playerBeingShot.Stun ();
+					if (currentHealth <= 0)
+					{
+						currentHealth = maxHealth;
+						RpcRespawn ();
+					}
+				}
+				else
+				{
+					playerBeingShot.AddBoost ();
+				}
+			}
+			else //an enemy is shooting a player
+			{
+				EnemyController enemyShooting = shooter.GetComponent<EnemyController> ();
+				currentHealth -= enemyShooting.GetDamage ();
 				if (currentHealth <= 0)
 				{
 					currentHealth = maxHealth;
 					RpcRespawn ();
 				}
-			}
-			else
-			{
-				player.AddBoost ();
 			}
 		}
 	}

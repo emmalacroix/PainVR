@@ -4,4 +4,7 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/PainVR/Scenes/Scene1.unity
+    guid: bd93959e0cf274ddf802f7a9fb4a51bc

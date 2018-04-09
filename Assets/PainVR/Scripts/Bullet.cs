@@ -4,11 +4,11 @@ using UnityEngine.UI;
 
 public class Bullet : MonoBehaviour {
 
-	public PlayerController shooter;
+	public GameObject shooter;
 
 	void Start()
 	{
-		shooter = gameObject.transform.parent.gameObject.GetComponent<PlayerController>();
+		shooter = gameObject.transform.parent.gameObject;
 		gameObject.transform.parent = null;
 	}
 
