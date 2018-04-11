@@ -1726,13 +1726,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 331406476}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 12.5, y: 0, z: 6.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &331778341
 Prefab:
   m_ObjectHideFlags: 0
@@ -7604,7 +7604,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 1521617436356424, guid: ce68f848181254be1bf01d8592556ec8,
     type: 2}
-  numberOfEnemies: 4
+  numberOfEnemies: 10
 --- !u!114 &1957774999
 MonoBehaviour:
   m_ObjectHideFlags: 0
