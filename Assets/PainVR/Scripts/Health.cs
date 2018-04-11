@@ -43,6 +43,7 @@ public class Health : NetworkBehaviour {
 						player.IncrementTeamScore ();
 					}
 					Destroy (gameObject);
+					FindObjectOfType<EnemySpawner> ().SpawnEnemy ();
 				}
 			}
 			else //an enemy is shooting another enemy
