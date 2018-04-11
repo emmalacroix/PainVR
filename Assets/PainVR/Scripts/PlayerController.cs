@@ -24,7 +24,7 @@ public class PlayerController : NetworkBehaviour {
 	void Start()
 	{
 		score = 0;
-		speed = 1.0f;
+		speed = 1.2f;
 		stunned = false;
 		damage = 10;
 		var minObj = GameObject.FindGameObjectWithTag ("MinBoundary");
@@ -148,15 +148,15 @@ public class PlayerController : NetworkBehaviour {
 
 	public void AddBoost()
 	{
-		speed = 3.0f;
+		speed = 2.5f;
 		damage = 20;
-		Invoke ("RemoveBoost", 5.0f);
+		Invoke ("RemoveBoost", 20.0f);
 	}
 
 	public void Stun()
 	{
 		stunned = true;
-		Invoke ("RemoveBoost", 5.0f);
+		Invoke ("RemoveBoost", 10.0f);
 	}
 
 	void OnChangeSpeed(float new_speed)
@@ -177,7 +177,7 @@ public class PlayerController : NetworkBehaviour {
 	public void RemoveBoost()
 	{
 		//return to default speed and damage settings
-		speed = 1.0f;
+		speed = 1.2f;
 		stunned = false;
 		damage = 10;
 	}

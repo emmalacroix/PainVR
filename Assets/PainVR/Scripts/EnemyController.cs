@@ -15,7 +15,7 @@ public class EnemyController : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		forwardSpeed = 2.0f;
+		forwardSpeed = 1.0f;
 		rotationSpeed = 2.0f;
 		damage = 10;
 		var minObj = GameObject.FindGameObjectWithTag ("MinBoundary");
