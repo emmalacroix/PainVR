@@ -20,6 +20,7 @@ public class PlayerController : NetworkBehaviour {
 	private bool stunned;
 	private Vector3 maxPosition;
 	private Vector3 minPosition;
+	private bool firstTriggerPress;
 
 	void Start()
 	{
@@ -31,6 +32,7 @@ public class PlayerController : NetworkBehaviour {
 		var maxObj = GameObject.FindGameObjectWithTag ("MaxBoundary");
 		minPosition = minObj.transform.position;
 		maxPosition = maxObj.transform.position;
+		firstTriggerPress = false;
 
 		if (isLocalPlayer)
 		{
@@ -46,7 +48,7 @@ public class PlayerController : NetworkBehaviour {
 
 		if (competing)
 		{
-			scoreText.transform.position = scoreText.transform.position + new Vector3 (150, 0, 0);
+			scoreText.transform.position = scoreText.transform.position + new Vector3 (0, 10, 0);
 			scoreText.text = "Opponent's Score: " + score.ToString ();
 		}
 		else
@@ -67,6 +69,8 @@ public class PlayerController : NetworkBehaviour {
 			return;
 		}
 
+		bool buttonPressed = false;
+		OVRInput.Update ();
 		if (!stunned)
 		{
 			var x = Input.GetAxis ("Horizontal") * Time.deltaTime * 150.0f;
@@ -77,8 +81,16 @@ public class PlayerController : NetworkBehaviour {
 			if (OutOfBounds())
 				transform.Translate (0, 0, -z);
 
-			if (Input.GetKeyDown (KeyCode.Space))
-				CmdFire ();
+			if (Input.GetKeyDown (KeyCode.Space) || OVRInput.Get (OVRInput.RawAxis1D.LIndexTrigger) >= .95f) {
+				if (firstTriggerPress) {
+					CmdFire ();
+					firstTriggerPress = false;
+					Invoke ("AllowRepeatFire", 0.4f);
+				}
+			}
+			if (OVRInput.Get (OVRInput.RawAxis1D.LIndexTrigger) < .95f) {
+				firstTriggerPress = true;
+			}
 		}
 	}
 
@@ -204,5 +216,10 @@ public class PlayerController : NetworkBehaviour {
 			return true;
 		else
 			return false;
+	}
+
+	void AllowRepeatFire()
+	{
+		firstTriggerPress = true;
 	}
 }
