@@ -81,7 +81,8 @@ public class PlayerController : NetworkBehaviour {
 			if (OutOfBounds())
 				transform.Translate (0, 0, -z);
 
-			if (Input.GetKeyDown (KeyCode.Space) || OVRInput.Get (OVRInput.RawAxis1D.LIndexTrigger) >= .95f) {
+			if (Input.GetKeyDown (KeyCode.Space) || OVRInput.Get (OVRInput.RawAxis1D.LIndexTrigger) >= .95f
+				|| OVRInput.Get (OVRInput.RawAxis1D.RIndexTrigger) >= .95f) {
 				if (firstTriggerPress) {
 					CmdFire ();
 					firstTriggerPress = false;
