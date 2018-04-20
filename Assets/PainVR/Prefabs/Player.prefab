@@ -557,7 +557,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: fdsfs
+  m_Text: 
 --- !u!114 &114272420976567346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -731,6 +731,7 @@ MonoBehaviour:
   healthBar: {fileID: 223162157238817034}
   scoreText: {fileID: 114240582505049034}
   competing: 1
+  leftHanded: 1
 --- !u!124 &124298361854003874
 Behaviour:
   m_ObjectHideFlags: 1

@@ -10,6 +10,8 @@ public class PlayerController : NetworkBehaviour {
 	public Canvas healthBar;
 	public Text scoreText;
 	public bool competing;
+	public bool leftHanded;
+
 	[SyncVar(hook = "OnChangeScore")]
 	private int score;
 	[SyncVar(hook = "OnChangeSpeed")]
@@ -40,6 +42,10 @@ public class PlayerController : NetworkBehaviour {
 				scoreText.text = "My Score: " + score.ToString ();
 			else
 				scoreText.text = "Team Score: " + score.ToString ();
+			if (leftHanded)
+			{
+				moveGun ();
+			}
 			return;
 		}
 
@@ -53,6 +59,23 @@ public class PlayerController : NetworkBehaviour {
 		}
 		else
 			scoreText.enabled = false;
+		if (leftHanded)
+		{
+			moveGun ();
+		}
+	}
+
+	void moveGun()
+	{
+		Quaternion rot = gameObject.transform.rotation;
+		transform.rotation = Quaternion.LookRotation (new Vector3 (0,0,1));
+		GameObject gun = gameObject.transform.Find ("Main Camera/Gun").gameObject;
+		GameObject bSpawn = gameObject.transform.Find ("Main Camera/Bullet Spawn").gameObject;
+		Vector3 gunPos = gun.transform.position;
+		Vector3 bSpawnPos = bSpawn.transform.position;
+		gun.transform.position = new Vector3(gunPos.x - 1.0f, gunPos.y, gunPos.z);
+		bulletSpawn.position = new Vector3(bSpawnPos.x - 1.0f, bSpawnPos.y, bSpawnPos.z);
+		transform.rotation = rot;
 	}
 
 	// Use this for initialization
