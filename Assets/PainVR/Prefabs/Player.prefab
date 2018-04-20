@@ -731,7 +731,7 @@ MonoBehaviour:
   healthBar: {fileID: 223162157238817034}
   scoreText: {fileID: 114240582505049034}
   competing: 1
-  leftHanded: 1
+  leftHanded: 0
 --- !u!124 &124298361854003874
 Behaviour:
   m_ObjectHideFlags: 1
