@@ -43,7 +43,9 @@ public class PlayerController : NetworkBehaviour {
 		if (isLocalPlayer)
 		{
 			if (competing)
+			{
 				scoreText.text = "My Score: " + score.ToString ();
+			}
 			else
 				scoreText.text = "Team Score: " + score.ToString ();
 			if (leftHanded)
@@ -58,7 +60,26 @@ public class PlayerController : NetworkBehaviour {
 
 		if (competing)
 		{
-			scoreText.transform.position = scoreText.transform.position + new Vector3 (0, 10, 0);
+			//scoreText.transform.position = gameObject.transform.Find ("Main Camera/Score Canvas/Score Text").gameObject.transform.position;
+			//scoreText.transform.position = scoreText.transform.position + new Vector3 (0, 10, 0);
+
+			PlayerController[] players = FindObjectsOfType<PlayerController> ();
+			PlayerController otherPlayer = GetComponent<PlayerController>();
+			foreach (PlayerController player in players)
+			{
+				if (player.transform.position != GetComponent<PlayerController>().transform.position)
+				{
+					Debug.Log ("Other player found");
+					otherPlayer = player;
+				}
+			}
+			Debug.Log (otherPlayer.transform.childCount);
+			Debug.Log (otherPlayer.transform.GetChild (1).childCount);
+			Debug.Log (otherPlayer.transform.GetChild (1).GetChild (3).childCount);
+			scoreText.transform.SetParent (otherPlayer.transform.GetChild (1).GetChild (3));
+			scoreText.transform.position = otherPlayer.transform.GetChild (1).GetChild (3).GetChild (0).position;
+			scoreText.transform.Rotate (0, 180, 0);
+			scoreText.transform.position = scoreText.transform.position + new Vector3(0.0f, .08f, 0.0f) + (otherPlayer.transform.right * 0.5f);
 			scoreText.text = "Opponent's Score: " + score.ToString ();
 		}
 		else
