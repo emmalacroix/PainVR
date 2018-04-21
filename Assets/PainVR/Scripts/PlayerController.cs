@@ -20,6 +20,8 @@ public class PlayerController : NetworkBehaviour {
 	private int damage;
 	[SyncVar(hook = "OnStun")]
 	private bool stunned;
+	private bool forwardCollide;
+	private bool backwardCollide;
 	private Vector3 maxPosition;
 	private Vector3 minPosition;
 	private bool firstTriggerPress;
@@ -29,6 +31,8 @@ public class PlayerController : NetworkBehaviour {
 		score = 0;
 		speed = 1.2f;
 		stunned = false;
+		forwardCollide = false;
+		backwardCollide = false;
 		damage = 10;
 		var minObj = GameObject.FindGameObjectWithTag ("MinBoundary");
 		var maxObj = GameObject.FindGameObjectWithTag ("MaxBoundary");
@@ -94,27 +98,40 @@ public class PlayerController : NetworkBehaviour {
 
 		bool buttonPressed = false;
 		OVRInput.Update ();
-		if (!stunned)
+		if (!stunned && !forwardCollide && !backwardCollide)
 		{
 			var x = Input.GetAxis ("Horizontal") * Time.deltaTime * 150.0f;
 			var z = Input.GetAxis ("Vertical") * Time.deltaTime * 3.0f * speed;
 
 			transform.Rotate (0, x, 0);
 			transform.Translate (0, 0, z);
-			if (OutOfBounds())
+			if (OutOfBounds ())
 				transform.Translate (0, 0, -z);
 
 			if (Input.GetKeyDown (KeyCode.Space) || OVRInput.Get (OVRInput.RawAxis1D.LIndexTrigger) >= .95f
-				|| OVRInput.Get (OVRInput.RawAxis1D.RIndexTrigger) >= .95f) {
-				if (firstTriggerPress) {
+			    || OVRInput.Get (OVRInput.RawAxis1D.RIndexTrigger) >= .95f)
+			{
+				if (firstTriggerPress)
+				{
 					CmdFire ();
 					firstTriggerPress = false;
 					Invoke ("AllowRepeatFire", 0.4f);
 				}
 			}
-			if (OVRInput.Get (OVRInput.RawAxis1D.LIndexTrigger) < .95f) {
+			if (OVRInput.Get (OVRInput.RawAxis1D.LIndexTrigger) < .95f)
+			{
 				firstTriggerPress = true;
 			}
+		}
+		else if (forwardCollide)
+		{
+			var z = 0.5f * Time.deltaTime * 3.0f * speed;
+			transform.Translate (0, 0, -z);
+		}
+		else if (backwardCollide)
+		{
+			var z = 0.5f * Time.deltaTime * 3.0f * speed;
+			transform.Translate (0, 0, z);
 		}
 	}
 
@@ -220,17 +237,20 @@ public class PlayerController : NetworkBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		//Debug.Log ("Player entered trigger");
-		//first find normal of point where player entered
-		var collisionPoint = other.ClosestPointOnBounds (transform.position);
-		Ray ray = new Ray (transform.position, collisionPoint - transform.position);
-		RaycastHit hit;
-		other.Raycast (ray, out hit, 10.0f);
-		var normal = hit.normal;
-		normal = Vector3.ProjectOnPlane (normal, new Vector3 (0, 1, 0));
-		normal.Normalize ();
-		//move player away from collision point along normal
-		transform.position = collisionPoint + 1.2f*GetComponent<CapsuleCollider>().radius*normal;
+		if (Input.GetAxis ("Vertical") > 0)
+		{
+			forwardCollide = true;
+		}
+		else
+		{
+			backwardCollide = true;
+		}
+	}
+
+	void OnTriggerExit(Collider other)
+	{
+		forwardCollide = false;
+		backwardCollide = false;
 	}
 
 	bool OutOfBounds()
