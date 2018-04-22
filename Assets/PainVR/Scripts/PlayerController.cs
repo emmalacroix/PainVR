@@ -258,7 +258,9 @@ public class PlayerController : NetworkBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		if (Input.GetAxis ("Vertical") > 0)
+		Vector3 playerForward = transform.forward;
+		Vector3 outwardFromBuilding = transform.position - other.ClosestPointOnBounds(transform.position);
+		if (Vector3.Dot(playerForward, outwardFromBuilding) < 0)
 		{
 			forwardCollide = true;
 		}
