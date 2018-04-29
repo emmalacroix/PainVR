@@ -730,7 +730,7 @@ MonoBehaviour:
   cam: {fileID: 20779627813773924}
   healthBar: {fileID: 223162157238817034}
   scoreText: {fileID: 114240582505049034}
-  competing: 1
+  competing: 0
   leftHanded: 1
 --- !u!124 &124298361854003874
 Behaviour:
