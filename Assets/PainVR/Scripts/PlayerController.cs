@@ -39,6 +39,7 @@ public class PlayerController : NetworkBehaviour {
 		minPosition = minObj.transform.position;
 		maxPosition = maxObj.transform.position;
 		firstTriggerPress = false;
+		GetComponent<MeshRenderer> ().material.color = Color.green;
 
 		if (isLocalPlayer)
 		{
@@ -104,10 +105,10 @@ public class PlayerController : NetworkBehaviour {
 	}
 
 	// Use this for initialization
-	public override void OnStartLocalPlayer()
-	{
-		GetComponent<MeshRenderer> ().material.color = Color.blue;
-	}
+//	public override void OnStartLocalPlayer()
+//	{
+//		GetComponent<MeshRenderer> ().material.color = Color.blue;
+//	}
 	
 	// Update is called once per frame
 	void Update ()
@@ -187,6 +188,20 @@ public class PlayerController : NetworkBehaviour {
 		foreach (PlayerController player in players)
 		{
 			player.IncrementScore ();
+		}
+	}
+
+	public void ResetScore()
+	{
+		score = 0;
+	}
+
+	public void ResetTeamScore()
+	{
+		PlayerController[] players = FindObjectsOfType<PlayerController> ();
+		foreach (PlayerController player in players)
+		{
+			player.ResetScore ();
 		}
 	}
 

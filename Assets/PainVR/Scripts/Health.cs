@@ -8,6 +8,8 @@ public class Health : NetworkBehaviour {
 	public const int maxHealth = 100;
 	[SyncVar(hook = "OnChangeHealth")]
 	public int currentHealth = maxHealth;
+	[SyncVar(hook = "OnChangeColor")]
+	private Color color;
 	public RectTransform healthBar;
 	private NetworkStartPosition[] spawnPoints;
 
@@ -59,16 +61,19 @@ public class Health : NetworkBehaviour {
 				if (playerShooting.IsCompeting ())
 				{
 					currentHealth -= playerShooting.GetDamage ();
-					playerBeingShot.Stun ();
+					//playerBeingShot.Stun ();
 					if (currentHealth <= 0)
 					{
+						playerBeingShot.ResetScore ();
 						currentHealth = maxHealth;
 						RpcRespawn ();
 					}
+					ChangeColor ();
 				}
 				else
 				{
-					playerBeingShot.AddBoost ();
+					currentHealth = Mathf.Min(currentHealth+20, 100);
+					ChangeColor ();
 				}
 			}
 			else //an enemy is shooting a player
@@ -77,10 +82,38 @@ public class Health : NetworkBehaviour {
 				currentHealth -= enemyShooting.GetDamage ();
 				if (currentHealth <= 0)
 				{
+					PlayerController playerBeingShot = gameObject.GetComponent<PlayerController> ();
+					if (playerBeingShot.IsCompeting ()) {
+						playerBeingShot.ResetScore ();
+					} else {
+						playerBeingShot.ResetTeamScore ();
+					}
 					currentHealth = maxHealth;
 					RpcRespawn ();
 				}
+				ChangeColor ();
 			}
+		}
+	}
+		
+	void OnChangeColor(Color color)
+	{
+		gameObject.GetComponent<MeshRenderer> ().material.color = color;
+	}
+
+	void ChangeColor()
+	{
+		if (currentHealth == 100) {
+			color = Color.green;
+		}
+		else if (currentHealth <= 90 && currentHealth >= 70) {
+			color = Color.white;
+		}
+		else if (currentHealth <= 60 && currentHealth >= 40) {
+			color = Color.yellow;
+		}
+		else if (currentHealth <= 30 && currentHealth >= 10) {
+			color = Color.red;
 		}
 	}
 
@@ -107,6 +140,7 @@ public class Health : NetworkBehaviour {
 
 			// Set the player’s position to the chosen spawn point
 			transform.position = spawnPoint;
+			GetComponent<MeshRenderer> ().material.color = Color.white;
 		}
 	}
 
