@@ -163,7 +163,7 @@ public class PlayerController : NetworkBehaviour {
 	[Command] //this code is called on the client but runs on the server!
 	void CmdFire()
 	{
-		source.PlayOneShot(shootSound,1F);
+		source.PlayOneShot(shootSound,0.5F);
 		// Create the Bullet from the Bullet Prefab
 		var bullet = (GameObject)Instantiate (
 			             bulletPrefab,
