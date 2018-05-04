@@ -8,6 +8,8 @@ public class PlayerController : NetworkBehaviour {
 	public Transform bulletSpawn;
 	public Camera cam;
 	public Canvas healthBar;
+	public GameObject visor;
+	public GameObject gun;
 	public Text scoreText;
 	public bool competing;
 	public bool leftHanded;
@@ -53,6 +55,7 @@ public class PlayerController : NetworkBehaviour {
 			{
 				moveGun ();
 			}
+			visor.GetComponent<MeshRenderer> ().enabled = false;
 			return;
 		}
 
@@ -61,9 +64,6 @@ public class PlayerController : NetworkBehaviour {
 
 		if (competing)
 		{
-			//scoreText.transform.position = gameObject.transform.Find ("Main Camera/Score Canvas/Score Text").gameObject.transform.position;
-			//scoreText.transform.position = scoreText.transform.position + new Vector3 (0, 10, 0);
-
 			PlayerController[] players = FindObjectsOfType<PlayerController> ();
 			PlayerController otherPlayer = GetComponent<PlayerController>();
 			foreach (PlayerController player in players)
@@ -74,14 +74,17 @@ public class PlayerController : NetworkBehaviour {
 					otherPlayer = player;
 				}
 			}
-			Debug.Log (otherPlayer.transform.childCount);
-			Debug.Log (otherPlayer.transform.GetChild (1).childCount);
-			Debug.Log (otherPlayer.transform.GetChild (1).GetChild (3).childCount);
-			scoreText.transform.SetParent (otherPlayer.transform.GetChild (1).GetChild (3));
+			Vector3 pos = otherPlayer.transform.position;
+			Quaternion rot = otherPlayer.transform.rotation;
+			otherPlayer.transform.position = GetComponent<PlayerController> ().transform.position;
+			otherPlayer.transform.rotation = GetComponent<PlayerController> ().transform.rotation;
+			scoreText.transform.rotation = otherPlayer.transform.GetChild (1).GetChild (3).GetChild (0).rotation;
 			scoreText.transform.position = otherPlayer.transform.GetChild (1).GetChild (3).GetChild (0).position;
-			scoreText.transform.Rotate (0, 180, 0);
-			scoreText.transform.position = scoreText.transform.position + new Vector3(0.0f, .08f, 0.0f) + (otherPlayer.transform.right * 0.5f);
+			scoreText.transform.position = scoreText.transform.position + new Vector3 (0.0f, .08f, 0.0f) + GetComponent<PlayerController> ().transform.right * 0.5f;
+			scoreText.transform.SetParent (otherPlayer.transform.GetChild (1).GetChild (3));
 			scoreText.text = "Opponent's Score: " + score.ToString ();
+			otherPlayer.transform.rotation = rot;
+			otherPlayer.transform.position = pos;
 		}
 		else
 			scoreText.enabled = false;
@@ -95,10 +98,8 @@ public class PlayerController : NetworkBehaviour {
 	{
 		Quaternion rot = gameObject.transform.rotation;
 		transform.rotation = Quaternion.LookRotation (new Vector3 (0,0,1));
-		GameObject gun = gameObject.transform.Find ("Main Camera/Gun").gameObject;
-		GameObject bSpawn = gameObject.transform.Find ("Main Camera/Bullet Spawn").gameObject;
 		Vector3 gunPos = gun.transform.position;
-		Vector3 bSpawnPos = bSpawn.transform.position;
+		Vector3 bSpawnPos = bulletSpawn.position;
 		gun.transform.position = new Vector3(gunPos.x - 1.0f, gunPos.y, gunPos.z);
 		bulletSpawn.position = new Vector3(bSpawnPos.x - 1.0f, bSpawnPos.y, bSpawnPos.z);
 		transform.rotation = rot;

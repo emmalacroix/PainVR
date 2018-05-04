@@ -729,6 +729,8 @@ MonoBehaviour:
   bulletSpawn: {fileID: 4998438747455994}
   cam: {fileID: 20779627813773924}
   healthBar: {fileID: 223162157238817034}
+  visor: {fileID: 1968589360862708}
+  gun: {fileID: 1907284696124532}
   scoreText: {fileID: 114240582505049034}
   competing: 1
   leftHanded: 1
