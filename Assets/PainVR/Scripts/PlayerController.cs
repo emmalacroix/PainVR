@@ -27,9 +27,13 @@ public class PlayerController : NetworkBehaviour {
 	private Vector3 maxPosition;
 	private Vector3 minPosition;
 	private bool firstTriggerPress;
+	public AudioClip shootSound;
+	private AudioSource source;
+
 
 	void Start()
 	{
+		source = GetComponent<AudioSource>();
 		score = 0;
 		speed = 1.2f;
 		stunned = false;
@@ -161,6 +165,7 @@ public class PlayerController : NetworkBehaviour {
 	[Command] //this code is called on the client but runs on the server!
 	void CmdFire()
 	{
+		source.PlayOneShot(shootSound,0.5F);
 		// Create the Bullet from the Bullet Prefab
 		var bullet = (GameObject)Instantiate (
 			             bulletPrefab,
