@@ -10,9 +10,12 @@ public class Health : NetworkBehaviour {
 	public int currentHealth = maxHealth;
 	public RectTransform healthBar;
 	private NetworkStartPosition[] spawnPoints;
+	public AudioClip crashSoft;
+	private AudioSource source;
 
 	void Start ()
 	{
+		source = GetComponent<AudioSource>();
 		if (isLocalPlayer)
 		{
 			spawnPoints = FindObjectsOfType<NetworkStartPosition>();
@@ -25,7 +28,7 @@ public class Health : NetworkBehaviour {
 		{
 			return;
 		}
-
+		source.PlayOneShot (crashSoft, 0.5F);
 		if (gameObject.tag == "Enemy")
 		{
 			if (shooter.tag == "Player") //a player is shooting an enemy
