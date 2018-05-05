@@ -13,6 +13,7 @@ public class PlayerController : NetworkBehaviour {
 	public Text scoreText;
 	public bool competing;
 	public bool leftHanded;
+	public AudioClip shootSound;
 
 	[SyncVar(hook = "OnChangeScore")]
 	private int score;
@@ -27,13 +28,12 @@ public class PlayerController : NetworkBehaviour {
 	private Vector3 maxPosition;
 	private Vector3 minPosition;
 	private bool firstTriggerPress;
-	public AudioClip shootSound;
 	private AudioSource source;
-
 
 	void Start()
 	{
 		source = GetComponent<AudioSource>();
+		source.volume = 0.1f;
 		score = 0;
 		speed = 1.2f;
 		stunned = false;
@@ -46,6 +46,8 @@ public class PlayerController : NetworkBehaviour {
 		maxPosition = maxObj.transform.position;
 		firstTriggerPress = false;
 		GetComponent<MeshRenderer> ().material.color = Color.green;
+		cam.GetComponents<AudioSource> () [0].volume = 0.5f;
+		cam.GetComponents<AudioSource> () [1].volume = 1.0f;
 
 		if (isLocalPlayer)
 		{
@@ -65,6 +67,8 @@ public class PlayerController : NetworkBehaviour {
 
 		cam.enabled = false;
 		healthBar.enabled = false;
+		cam.GetComponents<AudioSource> () [0].volume = 0.0f;
+		cam.GetComponents<AudioSource> () [1].volume = 0.0f;
 
 		if (competing)
 		{

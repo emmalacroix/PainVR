@@ -18,6 +18,7 @@ public class Health : NetworkBehaviour {
 	void Start ()
 	{
 		source = GetComponent<AudioSource>();
+		source.volume = 0.2f;
 		if (isLocalPlayer)
 		{
 			spawnPoints = FindObjectsOfType<NetworkStartPosition>();
